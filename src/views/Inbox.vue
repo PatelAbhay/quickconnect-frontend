@@ -101,7 +101,7 @@ import Navbar from "@/components/Navbar.vue";
 import axios from "../axios_instance.js";
 
 export default {
-  name: "UserFeed",
+  name: "Inbox",
   components: {
     Navbar
   },

@@ -3,8 +3,7 @@ import Router from "vue-router";
 import Login from "./views/Login.vue";
 import Registration from "./views/Registration.vue";
 import UserFeed from "./views/UserFeed.vue";
-import AdminOrganization from "./views/AdminOrganization.vue";
-import SystemChat from "./views/SystemChat.vue";
+import Inbox from "./views/Inbox.vue";
 
 
 Vue.use(Router);
@@ -29,9 +28,9 @@ export default new Router({
       component: UserFeed
     },
     {
-      path: "/management",
-      name: "AdminOrganization",
-      component: AdminOrganization
+      path: "/inbox",
+      name: "Inbox",
+      component: Inbox
     },
     {
       path: "/chat",
