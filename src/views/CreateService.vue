@@ -1,88 +1,47 @@
 <template>
   <div class="div-body">
-    <Navbar/>
+    <AdminNavbar/>
     <b-row class="custom-container">
       <b-col cols="12">
-        <b-container style="margin-top: 2vh;">
-          <b-row class="custom-row">
-            <b-col class="col-md-4 col-sm-5" style="margin: auto; padding: 20px !important">
-              <div class="chat-list text-left">
-                <h3><b>Chats</b></h3>
-                <hr/>
-                <div v-for="item in 16" class="list-of-people">
-                  <label>User Name</label>
-                </div>
+        <b-container style="margin-top: 5vh;">
+          <b-row class="custom-row post-feed">
+            <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
+              <div style="width: 100%;">                        
+                <b-button style="width: 100%; margin-bottom: 10px;" variant="primary" type="button" @click="openForm = !openForm;" >create new service</b-button>
               </div>
+              <b-form @submit.prevent="submitForm" v-if="openForm">
+                <div style="width: 100%; margin-bottom: 10px;">
+                  <input type="text" required v-model="serviceTitle" class="form-control main-feed-post" placeholder="Enter service title ...">                        
+                </div>
+                <div style="width: 100%; margin-bottom: 10px;">
+                  <input type="text" required v-model="serviceWork" class="form-control main-feed-post" placeholder="Describe your service ...">                        
+                </div>
+                <div style="width: 100%; margin-bottom: 10px;">
+                  <input type="number" required v-model="price" class="form-control main-feed-post" placeholder="Enter price per hour ...">                        
+                </div>
+                <div style="width: 100%;">                        
+                <b-button style="width: 20%; float: right; margin-bottom: 10px;" variant="primary" type="submit" @click="openForm = !openForm;" >create</b-button>
+              </div>
+              </b-form>
             </b-col>
-            <b-col class="col-md-8 col-sm-7" style="margin: auto; padding: 0px !important">
-              <div class="message-list text-left">
-                <h3><b>User Name</b></h3>
-                <hr/>
-                <div v-for="item in 2">
-                  <div class="message-me">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd jhasgd jhasg djhsag djhgsa jdhgsa jdhgsa jhdgsa jhdg sajhdgs ajhdg jashgd jhg ajhsgd jhasg djhsag jdhgas jhd
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-me">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-me">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                </div>
-              </div>
-              <div style="margin-top: 1vh" class="text-left">
-                <b-form @submit.prevent="submitForm">
-                    <div style="float: left; width: 80%;">
-                      <input style="height: 9vh;" type="text" required v-model="username" class="form-control" placeholder="Write your message here ...">                        
-                    </div>
-                    <div style="float: left; width: 17%; margin-left: 3%;">                        
-                      <b-button style="height: 9vh; width: 100%;" variant="primary" type="submit"><font-awesome-icon icon="paper-plane" /></b-button>
-                    </div>
-                  </b-form>
-              </div>
-              <!-- <b-card-group deck class="text-left main-posts">
+          </b-row>
+          <b-row class="custom-row">
+            <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
+              <b-card-group deck class="text-left main-posts">
                 <b-card header-tag="header" footer-tag="footer" class="uplifted">
                   <template #header>
-                    <h6 class="mb-0">Name of the user</h6>
+                    <h6 class="mb-0">Service Name</h6>
                   </template>
                   <b-card-text>Main post of the user goes here. People can see the post and daily posts. No need to add anyone. All posts are public.</b-card-text>
-                  <b-button href="#" variant="primary">Like</b-button>
                   <template #footer>
                     <div>
                       <p>
-                        <b>User Name</b>: H aosd osajd 0oqiwjdasndkq whdiqw nqw lkjdn qwijdnw qid wijnd ijqwndijnaksdn iqwnd kamsnd ,m
+                        <b>Price</b>: $ 45/hr
                       </p>
                     </div>
-                    <b-form @submit.prevent="submitForm">
-                      <div style="float: left; width: 80%;">
-                        <input type="text" required v-model="username" class="form-control" placeholder="Write your comment here ...">                        
-                      </div>
-                      <div style="float: left; width: 17%; margin-left: 3%;">                        
-                        <b-button style="width: 100%;" variant="primary" type="submit"><font-awesome-icon icon="paper-plane" /></b-button>
-                      </div>
-                    </b-form>
                   </template>
                 </b-card>
-              </b-card-group> -->
+              </b-card-group>
             </b-col>
           </b-row>
         </b-container>
@@ -111,21 +70,21 @@
 
 <script>
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
+import AdminNavbar from "@/components/AdminNavbar.vue";
 import axios from "../axios_instance.js";
 
 export default {
-  name: "Inbox",
+  name: "CreateService",
   components: {
-    Navbar
+    AdminNavbar
   },
   data() {
     return {
+      openForm: false,
       username: null,
       taskProgress: null,
       taskList: [],
       openFormTaskUpdate: false,
-      openForm: false,
       goalDescription: null,
       openFormEmployee: false,
       employeeEmail: null,
@@ -276,59 +235,15 @@ td:hover {
   background-color: var(--accent);
 }
 
+.main-posts {
+  margin-bottom: 20px;
+}
+
 .post-feed {
   margin-bottom: 15px;
 }
-
 .main-feed-post {
-  height: 70px;
   padding-top: 20px;
   padding-bottom: 20px;
-}
-
-.chat-list {
-  padding: 10px;
-  background-color: var(--accent);
-  height: 80vh;
-  border: 1px solid rgb(212, 212, 212);
-  overflow-y: scroll;
-}
-.message-list {
-  padding: 10px;
-  background-color: var(--accent);
-  height: 70vh;
-  border: 1px solid rgb(212, 212, 212);
-  overflow-y: scroll;
-}
-.list-of-people {
-  background-color: var(--accentTwo);
-  border-radius: 25px;
-  padding: 13px 15px 5px 15px; 
-  border: 1px solid rgb(240, 240, 240);
-  cursor: pointer;
-  margin-bottom: 15px;
-}
-.message-me {
-  background-color: var(--accent);
-  text-align: right !important;
-  overflow-wrap: break-word !important;
-  border-radius: 25px;
-  padding: 6px 15px 5px 15px; 
-  border: 1px solid rgb(240, 240, 240);
-  margin-bottom: 15px;
-}
-.message-me > label {
-  font-size: 12px;
-}
-.message-you > label {
-  font-size: 12px;
-}
-.message-you {
-  background-color: var(--accentTwo);
-  border-radius: 25px;
-  text-align: left !important;
-  padding: 6px 15px 5px 15px; 
-  border: 1px solid rgb(240, 240, 240);
-  margin-bottom: 15px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="div-body">
-    <Navbar/>
+    <AdminNavbar/>
     <b-row class="custom-container">
       <b-col cols="12">
         <b-container style="margin-top: 2vh;">
@@ -111,13 +111,13 @@
 
 <script>
 // @ is an alias to /src
-import Navbar from "@/components/Navbar.vue";
+import AdminNavbar from "@/components/AdminNavbar.vue";
 import axios from "../axios_instance.js";
 
 export default {
-  name: "Inbox",
+  name: "ServiceInbox",
   components: {
-    Navbar
+    AdminNavbar
   },
   data() {
     return {
