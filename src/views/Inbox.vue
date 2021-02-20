@@ -3,22 +3,53 @@
     <Navbar/>
     <b-row class="custom-container">
       <b-col cols="12">
-        <b-container style="margin-top: 5vh;">
-          <b-row class="custom-row post-feed">
-            <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
-              <b-form @submit.prevent="submitForm">
-                <div style="float: left; width: 80%;">
-                  <input type="text" required v-model="username" class="form-control main-feed-post" placeholder="Share your words ...">                        
-                </div>
-                <div style="float: left; width: 17%; margin-left: 3%;">                        
-                  <b-button style="width: 100%; height: 70px;" variant="primary" type="submit">Post</b-button>
-                </div>
-              </b-form>
-            </b-col>
-          </b-row>
+        <b-container style="margin-top: 2vh;">
           <b-row class="custom-row">
-            <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
-              <b-card-group deck class="text-left main-posts">
+            <b-col class="col-md-4 col-sm-5" style="margin: auto; padding: 20px !important">
+              <div class="chat-list text-left">
+                <h3><b>Chats</b></h3>
+                <hr/>
+                <div v-for="item in 16" class="list-of-people">
+                  <label>User Name</label>
+                </div>
+              </div>
+            </b-col>
+            <b-col class="col-md-8 col-sm-7" style="margin: auto; padding: 0px !important">
+              <div class="message-list text-left">
+                <h3><b>User Name</b></h3>
+                <hr/>
+                <div v-for="item in 2">
+                  <div class="message-me">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd jhasgd jhasg djhsag djhgsa jdhgsa jdhgsa jhdgsa jhdg sajhdgs ajhdg jashgd jhg ajhsgd jhasg djhsag jdhgas jhd
+                  </div>
+                  <div class="message-you">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  </div>
+                  <div class="message-you">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  </div>
+                  <div class="message-me">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  </div>
+                  <div class="message-you">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  </div>
+                  <div class="message-you">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  </div>
+                  <div class="message-me">
+                    <label><i><b>User Name</b></i></label><br/>
+                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  </div>
+                </div>
+              </div>
+              <!-- <b-card-group deck class="text-left main-posts">
                 <b-card header-tag="header" footer-tag="footer" class="uplifted">
                   <template #header>
                     <h6 class="mb-0">Name of the user</h6>
@@ -41,34 +72,7 @@
                     </b-form>
                   </template>
                 </b-card>
-              </b-card-group>
-              <b-card-group deck class="text-left main-posts">
-                <b-card header-tag="header" footer-tag="footer" class="uplifted">
-                  <template #header>
-                    <h6 class="mb-0">Name of the user</h6>
-                  </template>
-                  <b-card-text>Main post of the user goes here. People can see the post and daily posts. No need to add anyone. All posts are public.</b-card-text>
-                  <b-button href="#" variant="primary">Like</b-button>
-                  <template #footer>
-                    <div>
-                      <p>
-                        <b>User Name</b>: H aosd osajd 0oqiwjdasndkq whdiqw nqw lkjdn qwijdnw qid wijnd ijqwndijnaksdn iqwnd kamsnd ,m
-                      </p>
-                      <p>
-                        <b>User Name</b>: H aosd osajd 0oqiwjdasndkq whdiqw nqw lkjdn qwijdnw qid wijnd ijqwndijnaksdn iqwnd kamsnd ,m
-                      </p>
-                    </div>
-                    <b-form @submit.prevent="submitForm">
-                      <div style="float: left; width: 80%;">
-                        <input type="text" required v-model="username" class="form-control" placeholder="Write your comment here ...">                        
-                      </div>
-                      <div style="float: left; width: 17%; margin-left: 3%;">                        
-                        <b-button style="width: 100%;" variant="primary" type="submit"><font-awesome-icon icon="paper-plane" /></b-button>
-                      </div>
-                    </b-form>
-                  </template>
-                </b-card>
-              </b-card-group>
+              </b-card-group> -->
             </b-col>
           </b-row>
         </b-container>
@@ -262,16 +266,58 @@ td:hover {
   background-color: var(--accent);
 }
 
-.main-posts {
-  margin-bottom: 20px;
-}
-
 .post-feed {
   margin-bottom: 15px;
 }
+
 .main-feed-post {
   height: 70px;
   padding-top: 20px;
   padding-bottom: 20px;
+}
+
+.chat-list {
+  padding: 10px;
+  background-color: var(--accent);
+  height: 80vh;
+  box-shadow: 1px 1px 1px 1px rgb(224, 224, 224);
+  border: 1px solid rgb(212, 212, 212);
+  overflow-y: scroll;
+}
+.message-list {
+  padding: 10px;
+  background-color: var(--accent);
+  height: 80vh;
+  box-shadow: 1px 1px 1px 1px rgb(224, 224, 224);
+  border: 1px solid rgb(212, 212, 212);
+  overflow-y: scroll;
+}
+.list-of-people {
+  background-color: var(--table-header-color);
+  border-radius: 25px;
+  padding: 13px 15px 5px 15px; 
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+.message-me {
+  background-color: var(--accentTwo);
+  text-align: right !important;
+  overflow-wrap: break-word !important;
+  border-radius: 25px;
+  padding: 6px 15px 5px 15px; 
+  margin-bottom: 15px;
+}
+.message-me > label {
+  font-size: 12px;
+}
+.message-you > label {
+  font-size: 12px;
+}
+.message-you {
+  background-color: var(--table-header-color);
+  border-radius: 25px;
+  text-align: left !important;
+  padding: 6px 15px 5px 15px; 
+  margin-bottom: 15px;
 }
 </style>

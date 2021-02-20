@@ -32,10 +32,5 @@ export default new Router({
       name: "Inbox",
       component: Inbox
     },
-    {
-      path: "/chat",
-      name: "SystemChat",
-      component: SystemChat
-    },
   ]
 });
