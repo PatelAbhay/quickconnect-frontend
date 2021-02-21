@@ -26,15 +26,16 @@
                   <b-card-text>{{post.text}}</b-card-text>
                   <hr/>
                   <div>
-                    <!-- <b-button style="margin-right: 20px; float: left;" href="#" variant="outline-primary"><font-awesome-icon style="float: right;" icon="thumbs-up" /></b-button> -->
-                    
                     <b-card-text style="float: left">
-                      {{post.num_likes}} likes achieved
-                      <font-awesome-icon @click="sendLike(post)" style="cursor: pointer; color: var(--primary); margin-left: 10px; font-size: 20px;" icon="thumbs-up" />
+                      <b>{{post.num_likes}}</b> likes and <b>{{post.comments.length || 0}}</b> comments
                     </b-card-text>
+                    <b-button @click="sendInitialComment(post)" style="font-size: 10px; float: right;" variant="outline-primary">comments</b-button>
+                    <b-button @click="sendLike(post)" style="margin-right: 10px; font-size: 10px; float: right;" variant="outline-primary"><font-awesome-icon style="color: var(--primary); font-size: 10px;" icon="thumbs-up" /></b-button>
+                    <!-- <font-awesome-icon @click="sendLike(post)" style="float: right; cursor: pointer; color: var(--primary); margin-left: 10px; font-size: 20px;" icon="thumbs-up" />                       -->
+                    
                     
                   </div>
-                  <template #footer>
+                  <template #footer v-if="openFormComment == post.id">
                     <div v-for="(comment, index2) in post.comments" :key="index2">
                       <p>
                         <b>{{comment.from_name}}</b>: {{comment.content}}
@@ -63,7 +64,7 @@
       <div class="d-block text-center">
         <p class="text-left">Task status has been updated!</p>
       </div>
-      <b-button class="mt-3" block @click="$bvModal.hide('modal-success')">CLOSE</b-button>
+      <b-button class="mt-3" block color="primary" @click="$bvModal.hide('modal-success')">CLOSE</b-button>
     </b-modal>
     <b-modal id="modal-failure" hide-footer>
       <template v-slot:modal-title>
@@ -72,7 +73,16 @@
       <div class="d-block text-center">
         <p class="text-left">Something went wrong!</p>
       </div>
-      <b-button class="mt-3" block @click="$bvModal.hide('modal-failure')">CLOSE</b-button>
+      <b-button class="mt-3" color="primary" block @click="$bvModal.hide('modal-failure')">CLOSE</b-button>
+    </b-modal>
+    <b-modal id="modal-failure2" hide-footer>
+      <template v-slot:modal-title>
+        FAILURE
+      </template>
+      <div class="d-block text-center">
+        <p class="text-left">Please do not use any rude or inappropriate comment! Let's spread positivity.</p>
+      </div>
+      <b-button class="mt-3" block @click="$bvModal.hide('modal-failure2')">CLOSE</b-button>
     </b-modal>
   </div>
 </template>
@@ -93,9 +103,13 @@ export default {
       mainPost: null,
       allPosts: [],
       userInfo: null,
+      openFormComment: null,
     };
   },
   methods: {
+    sendInitialComment(post) {
+      this.openFormComment = post.id;
+    },
     async sendComment(post) {
       try {
         let response = await axios.post('/postComment', {
@@ -103,9 +117,13 @@ export default {
           content: this.mainComment,
           from_id: this.userInfo.id,
           from_name: this.userInfo.name,
-        });      
-        this.mainComment = null;
-        this.allPosts = response.data.result;
+        });    
+        if(response.data.result == 'Hate Speech')  {
+          this.$bvModal.show('modal-failure2');
+        } else {
+          this.mainComment = null;
+          this.allPosts = response.data.result;
+        }
       } catch (error) {
         this.$bvModal.show('modal-failure');
       }
@@ -153,7 +171,12 @@ export default {
 
 <style scoped lang="scss">
 .div-body {
+  min-height: 100vh;
   overflow-x: hidden !important;
+  background-image: url('../assets/Groups.jpg');
+  background-position:center;
+  // background-repeat:no-repeat;
+  background-size:cover;
 }
 .custom-row {
   padding-top: 7px;

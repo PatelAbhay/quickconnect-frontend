@@ -10,8 +10,8 @@
                 <b-card header-tag="header" footer-tag="footer" class="uplifted">
                   <template #header>
                     <h4 class="mb-0" style="float: left;">{{service.title}}</h4>
-                    <b-button @click="sendMessage(service)" style="font-size: 10px; float: right; margin-left: 10px;" variant="outline-primary">contact</b-button>
-                    <b-button @click="sendComment(service)" style="font-size: 10px; float: right;" variant="outline-primary">comment</b-button>
+                    <!-- <b-button @click="sendMessage(service)" style="font-size: 10px; float: right; margin-left: 10px;" variant="outline-primary">contact</b-button>
+                    <b-button @click="sendComment(service)" style="font-size: 10px; float: right;" variant="outline-primary">comment</b-button> -->
                   </template>
                   <b-card-text>Service Provider - {{service.user_name}}</b-card-text>
                   <b-card-text>{{service.description}}</b-card-text>
@@ -19,9 +19,12 @@
                   <hr/>
                   <div>
                     <b-card-text style="float: left">
-                      {{service.num_likes}} likes achieved
-                      <font-awesome-icon @click="sendLike(service)" style="cursor: pointer; color: var(--primary); margin-left: 10px; font-size: 20px;" icon="thumbs-up" />
+                      <b>{{service.num_likes}}</b> likes and <b>{{service.comments.length || 0}}</b> comments
+                      <!-- <font-awesome-icon @click="sendLike(service)" style="cursor: pointer; color: var(--primary); margin-left: 10px; font-size: 20px;" icon="thumbs-up" /> -->
                     </b-card-text>
+                    <b-button @click="sendMessage(service)" style="font-size: 10px; float: right; margin-left: 10px;" variant="outline-primary">contact</b-button>
+                    <b-button @click="sendComment(service)" style="font-size: 10px; float: right;" variant="outline-primary">comment</b-button>
+                    <b-button @click="sendLike(service)" style="margin-right: 10px; font-size: 10px; float: right;" variant="outline-primary"><font-awesome-icon style="color: var(--primary); font-size: 10px;" icon="thumbs-up" /></b-button>
                   </div>
                   <template #footer v-if="openFormComment == service.id || openForm == service.id">
                     <div v-if="openFormComment == service.id">
@@ -85,6 +88,15 @@
       </div>
       <b-button class="mt-3" block @click="$bvModal.hide('modal-failure')">CLOSE</b-button>
     </b-modal>
+    <b-modal id="modal-failure2" hide-footer>
+      <template v-slot:modal-title>
+        FAILURE
+      </template>
+      <div class="d-block text-center">
+        <p class="text-left">Please do not use any rude or inappropriate comment! Let's spread positivity.</p>
+      </div>
+      <b-button class="mt-3" block @click="$bvModal.hide('modal-failure2')">CLOSE</b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -137,8 +149,12 @@ export default {
           from_id: this.userInfo.id,
           from_name: this.userInfo.name,
         });      
-        this.mainComment = null;
-        this.allServices = response.data.result;
+        if(response.data.result == 'Hate Speech')  {
+          this.$bvModal.show('modal-failure2');
+        } else {
+          this.mainComment = null;
+          this.allServices = response.data.result;
+        }
       } catch (error) {
         this.$bvModal.show('modal-failure');
       }
@@ -178,7 +194,12 @@ export default {
 
 <style scoped lang="scss">
 .div-body {
+  min-height: 100vh;
   overflow-x: hidden !important;
+  background-image: url('../assets/Groups.jpg');
+  background-position:center;
+  // background-repeat:no-repeat;
+  background-size:cover;
 }
 .custom-row {
   padding-top: 7px;

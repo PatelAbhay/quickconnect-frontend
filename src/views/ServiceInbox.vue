@@ -154,7 +154,13 @@ export default {
 
 <style scoped lang="scss">
 .div-body {
+  min-height: 100vh;
   overflow-x: hidden !important;
+  overflow-x: hidden !important;
+  background-image: url('../assets/Group 16.jpg');
+  background-position:center;
+  // background-repeat:no-repeat;
+  background-size:cover;
 }
 .custom-row {
   padding-top: 7px;
