@@ -9,7 +9,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item right href="/create-service">Create</b-nav-item>
+          <b-nav-item right href="/create-service">Service</b-nav-item>
           <b-nav-item right href="/service-inbox">Inbox</b-nav-item>
           <b-nav-item right href="/">Logout</b-nav-item>
         </b-navbar-nav>

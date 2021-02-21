@@ -20,25 +20,33 @@
                   <input type="number" required v-model="price" class="form-control main-feed-post" placeholder="Enter price per hour ...">                        
                 </div>
                 <div style="width: 100%;">                        
-                <b-button style="width: 20%; float: right; margin-bottom: 10px;" variant="primary" type="submit" @click="openForm = !openForm;" >create</b-button>
+                <b-button style="width: 20%; float: right; margin-bottom: 10px;" variant="primary" type="submit">create</b-button>
               </div>
               </b-form>
             </b-col>
           </b-row>
-          <b-row class="custom-row">
+          <b-row class="custom-row" v-if="allServices">
             <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
-              <b-card-group deck class="text-left main-posts">
+              <b-card-group v-for="(service, index) in allServices" :key="index" deck class="text-left main-posts">
                 <b-card header-tag="header" footer-tag="footer" class="uplifted">
                   <template #header>
-                    <h6 class="mb-0">Service Name</h6>
+                    <h6 class="mb-0">{{service.title}}</h6>
                   </template>
-                  <b-card-text>Main post of the user goes here. People can see the post and daily posts. No need to add anyone. All posts are public.</b-card-text>
+                  <b-card-text>{{service.description}}</b-card-text>
+                  <b-card-text><b>Price</b>: $ {{service.price}}/hr</b-card-text>
+                  <hr/>
+                  <div>
+                    <b-card-text style="float: left">
+                      {{service.num_likes}} 
+                      <font-awesome-icon style="cursor: pointer; color: var(--primary); margin-left: 5px; font-size: 20px;" icon="thumbs-up" />
+                    </b-card-text>
+                  </div>
                   <template #footer>
-                    <div>
-                      <p>
-                        <b>Price</b>: $ 45/hr
-                      </p>
-                    </div>
+                    <div v-for="(comment, index2) in service.comments" :key="index2">
+                        <p>
+                          <b>{{comment.from_name}}</b>: {{comment.content}}
+                        </p>
+                      </div>
                   </template>
                 </b-card>
               </b-card-group>
@@ -52,7 +60,7 @@
         SUCCESS
       </template>
       <div class="d-block text-center">
-        <p class="text-left">Task status has been updated!</p>
+        <p class="text-left">New service has been created!</p>
       </div>
       <b-button class="mt-3" block @click="$bvModal.hide('modal-success')">CLOSE</b-button>
     </b-modal>
@@ -80,109 +88,49 @@ export default {
   },
   data() {
     return {
+      serviceTitle: null,
+      serviceWork: null,
+      price: null,
       openForm: false,
       username: null,
-      taskProgress: null,
-      taskList: [],
-      openFormTaskUpdate: false,
-      goalDescription: null,
-      openFormEmployee: false,
-      employeeEmail: null,
-      selectdOrg: null,
-      name: null,
-      email: null,
-      weblink: null,
-      loadingActive: false,
-      organization: [],
-      employee: [],
-      organizationId: null,
-      userHealthStatus: null,
-      userActivityStatus: null,
-      priority: null,
-      options: [{ value: null, text: 'Please select an organization' }],
-      progressOptions: [
-        { value: null, text: 'Please select progress' },
-        { value: "Not Started", text: 'Not Started' },
-        { value: "In Progress", text: 'In Progress' },
-        { value: "Need Review", text: 'Need Review' }
-      ],
-      mainStatusOptions: [
-        { value: null, text: 'Please select activity status' },
-        { value: "active", text: 'active' },
-        { value: "on leave", text: 'on leave' },
-      ],
-      healthStatusOptions: [
-        { value: null, text: 'Please select health status' },
-        { value: "Ok", text: 'Ok' },
-        { value: "Ok and Vaccinated", text: 'Ok and Vaccinated' },
-        { value: "Covid", text: 'Covid' },
-        { value: "Need Mental Help", text: 'Need Mental Help' },
-        { value: "Other Sickness", text: 'Other Sickness' }
-      ],
+      userInfo: null,
+      allServices: [],
     };
   },
   methods: {
     async submitForm() {
       try {
-        let response = await axios.post('/update/users', {
-          email: this.email,
-          status: this.userHealthStatus,
-          leave_status: this.userActivityStatus,
-        });      
-        localStorage.setItem('userInfo', JSON.stringify({
-          activityStatus: this.userActivityStatus,
-          email: this.email,
-          role: "employee",
-          status: this.userHealthStatus,
-          username: this.userActivityStatus
-        }));
-        this.$bvModal.show('modal-success');
-      } catch (error) {
-        this.$bvModal.show('modal-failure');
-      }
-    },
-    selectedTaskProgress(item) {
-      console.log(item);
-      if(item.status == 'Completed') return;
-      this.selectedTaskId = item.id;
-      this.taskProgress = item.status;
-      this.openFormTaskUpdate = true;
-    },
-    async submitFormTaskUpdate() {
-      this.loadingActive = true;
-      let empName = "";
-      try {
-        let response = await axios.post('/update/tasks', {
-          id: this.selectedTaskId,
-          assignedTo: this.email,
-          empName: this.username,
-          status: this.taskProgress,
+        let response = await axios.post('/services', {
+          service: {
+            title: this.serviceTitle,
+            description: this.serviceWork,
+            price: this.price,
+            user_id: this.userInfo.id,
+            user_name: this.userInfo.name,
+            id: this.allServices.length + 1,
+            num_likes: 0,
+            comments: [],
+          }
         });
-        this.openFormTaskUpdate = false;
-        this.taskProgress = null;
-        this.assignedTo = null;        
-        await this.getGoalTasks();
+        this.allServices = response.data.result;
+        this.openForm = !this.openForm;
         this.$bvModal.show('modal-success');
       } catch (error) {
         this.$bvModal.show('modal-failure');
       }
     },
-    async getGoalTasks() {
+    async getServices() {
       try {
-        let response = await axios.get('/read/employeetasks/'+this.email);
-        this.taskList = response.data;
-        console.log("tasklist: ", this.taskList);
+        let response = await axios.get('/getService/'+this.userInfo.id);
+        this.allServices = response.data.result;
       } catch (error) {
-        // this.$bvModal.show('modal-failure');
+        this.$bvModal.show('modal-failure');
       }
     },
   },
   async mounted() {
-    let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    this.email = userInfo.email;
-    this.userHealthStatus = userInfo.status;
-    this.userActivityStatus = userInfo.activityStatus;
-    await this.getGoalTasks();
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    await this.getServices();
   },
 };
 </script>

@@ -5,10 +5,10 @@
       <b-col cols="12">
         <b-container style="margin-top: 5vh;">
           <b-row class="custom-row post-feed">
-            <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
+            <b-col class="col-md-8 col-sm-10" style="margin: auto; padding: 0px !important">
               <b-form @submit.prevent="submitForm">
                 <div style="float: left; width: 80%;">
-                  <input type="text" required v-model="username" class="form-control main-feed-post" placeholder="Share your words ...">                        
+                  <input type="text" required v-model="mainPost" class="form-control main-feed-post" placeholder="Share your words ...">                        
                 </div>
                 <div style="float: left; width: 17%; margin-left: 3%;">                        
                   <b-button style="width: 100%; height: 70px;" variant="primary" type="submit">Post</b-button>
@@ -18,49 +18,31 @@
           </b-row>
           <b-row class="custom-row">
             <b-col class="col-md-8 col-sm-11" style="margin: auto; padding: 0px !important">
-              <b-card-group deck class="text-left main-posts">
+              <b-card-group v-for="(post, index) in allPosts" :key="index" deck class="text-left main-posts">
                 <b-card header-tag="header" footer-tag="footer" class="uplifted">
                   <template #header>
-                    <h6 class="mb-0">Name of the user</h6>
+                    <h6 class="mb-0">{{post.user_name}}</h6>
                   </template>
-                  <b-card-text>Main post of the user goes here. People can see the post and daily posts. No need to add anyone. All posts are public.</b-card-text>
-                  <b-button href="#" variant="primary">Like</b-button>
+                  <b-card-text>{{post.text}}</b-card-text>
+                  <hr/>
+                  <div>
+                    <!-- <b-button style="margin-right: 20px; float: left;" href="#" variant="outline-primary"><font-awesome-icon style="float: right;" icon="thumbs-up" /></b-button> -->
+                    
+                    <b-card-text style="float: left">
+                      {{post.num_likes}} likes achieved
+                      <font-awesome-icon @click="sendLike(post)" style="cursor: pointer; color: var(--primary); margin-left: 10px; font-size: 20px;" icon="thumbs-up" />
+                    </b-card-text>
+                    
+                  </div>
                   <template #footer>
-                    <div>
+                    <div v-for="(comment, index2) in post.comments" :key="index2">
                       <p>
-                        <b>User Name</b>: H aosd osajd 0oqiwjdasndkq whdiqw nqw lkjdn qwijdnw qid wijnd ijqwndijnaksdn iqwnd kamsnd ,m
+                        <b>{{comment.from_name}}</b>: {{comment.content}}
                       </p>
                     </div>
-                    <b-form @submit.prevent="submitForm">
+                    <b-form @submit.prevent="sendComment(post)">
                       <div style="float: left; width: 80%;">
-                        <input type="text" required v-model="username" class="form-control" placeholder="Write your comment here ...">                        
-                      </div>
-                      <div style="float: left; width: 17%; margin-left: 3%;">                        
-                        <b-button style="width: 100%;" variant="primary" type="submit"><font-awesome-icon icon="paper-plane" /></b-button>
-                      </div>
-                    </b-form>
-                  </template>
-                </b-card>
-              </b-card-group>
-              <b-card-group deck class="text-left main-posts">
-                <b-card header-tag="header" footer-tag="footer" class="uplifted">
-                  <template #header>
-                    <h6 class="mb-0">Name of the user</h6>
-                  </template>
-                  <b-card-text>Main post of the user goes here. People can see the post and daily posts. No need to add anyone. All posts are public.</b-card-text>
-                  <b-button href="#" variant="primary">Like</b-button>
-                  <template #footer>
-                    <div>
-                      <p>
-                        <b>User Name</b>: H aosd osajd 0oqiwjdasndkq whdiqw nqw lkjdn qwijdnw qid wijnd ijqwndijnaksdn iqwnd kamsnd ,m
-                      </p>
-                      <p>
-                        <b>User Name</b>: H aosd osajd 0oqiwjdasndkq whdiqw nqw lkjdn qwijdnw qid wijnd ijqwndijnaksdn iqwnd kamsnd ,m
-                      </p>
-                    </div>
-                    <b-form @submit.prevent="submitForm">
-                      <div style="float: left; width: 80%;">
-                        <input type="text" required v-model="username" class="form-control" placeholder="Write your comment here ...">                        
+                        <input type="text" required v-model="mainComment" class="form-control" placeholder="Write your comment here ...">                        
                       </div>
                       <div style="float: left; width: 17%; margin-left: 3%;">                        
                         <b-button style="width: 100%;" variant="primary" type="submit"><font-awesome-icon icon="paper-plane" /></b-button>
@@ -107,109 +89,64 @@ export default {
   },
   data() {
     return {
-      username: null,
-      taskProgress: null,
-      taskList: [],
-      openFormTaskUpdate: false,
-      openForm: false,
-      goalDescription: null,
-      openFormEmployee: false,
-      employeeEmail: null,
-      selectdOrg: null,
-      name: null,
-      email: null,
-      weblink: null,
-      loadingActive: false,
-      organization: [],
-      employee: [],
-      organizationId: null,
-      userHealthStatus: null,
-      userActivityStatus: null,
-      priority: null,
-      options: [{ value: null, text: 'Please select an organization' }],
-      progressOptions: [
-        { value: null, text: 'Please select progress' },
-        { value: "Not Started", text: 'Not Started' },
-        { value: "In Progress", text: 'In Progress' },
-        { value: "Need Review", text: 'Need Review' }
-      ],
-      mainStatusOptions: [
-        { value: null, text: 'Please select activity status' },
-        { value: "active", text: 'active' },
-        { value: "on leave", text: 'on leave' },
-      ],
-      healthStatusOptions: [
-        { value: null, text: 'Please select health status' },
-        { value: "Ok", text: 'Ok' },
-        { value: "Ok and Vaccinated", text: 'Ok and Vaccinated' },
-        { value: "Covid", text: 'Covid' },
-        { value: "Need Mental Help", text: 'Need Mental Help' },
-        { value: "Other Sickness", text: 'Other Sickness' }
-      ],
+      mainComment: null,
+      mainPost: null,
+      allPosts: [],
+      userInfo: null,
     };
   },
   methods: {
+    async sendComment(post) {
+      try {
+        let response = await axios.post('/postComment', {
+          id: post.id,
+          content: this.mainComment,
+          from_id: this.userInfo.id,
+          from_name: this.userInfo.name,
+        });      
+        this.mainComment = null;
+        this.allPosts = response.data.result;
+      } catch (error) {
+        this.$bvModal.show('modal-failure');
+      }
+    },
+    async sendLike(post) {
+      try {
+        let response = await axios.post('/postLike', {
+          id: post.id
+        });      
+        this.allPosts = response.data.result;
+      } catch (error) {
+        this.$bvModal.show('modal-failure');
+      }
+    },
     async submitForm() {
       try {
-        let response = await axios.post('/update/users', {
-          email: this.email,
-          status: this.userHealthStatus,
-          leave_status: this.userActivityStatus,
+        let response = await axios.post('/posts', {
+          id: this.allPosts.length,
+          user_name: this.userInfo.name,
+          text: this.mainPost,
+          num_likes: 0,
+          comments: [],
         });      
-        localStorage.setItem('userInfo', JSON.stringify({
-          activityStatus: this.userActivityStatus,
-          email: this.email,
-          role: "employee",
-          status: this.userHealthStatus,
-          username: this.userActivityStatus
-        }));
-        this.$bvModal.show('modal-success');
+        this.allPosts = response.data.result;
       } catch (error) {
         this.$bvModal.show('modal-failure');
       }
     },
-    selectedTaskProgress(item) {
-      console.log(item);
-      if(item.status == 'Completed') return;
-      this.selectedTaskId = item.id;
-      this.taskProgress = item.status;
-      this.openFormTaskUpdate = true;
-    },
-    async submitFormTaskUpdate() {
-      this.loadingActive = true;
-      let empName = "";
+    async getPosts() {
       try {
-        let response = await axios.post('/update/tasks', {
-          id: this.selectedTaskId,
-          assignedTo: this.email,
-          empName: this.username,
-          status: this.taskProgress,
-        });
-        this.openFormTaskUpdate = false;
-        this.taskProgress = null;
-        this.assignedTo = null;        
-        await this.getGoalTasks();
-        this.$bvModal.show('modal-success');
-      } catch (error) {
-        this.$bvModal.show('modal-failure');
-      }
-    },
-    async getGoalTasks() {
-      try {
-        let response = await axios.get('/read/employeetasks/'+this.email);
-        this.taskList = response.data;
-        console.log("tasklist: ", this.taskList);
+        let response = await axios.get('/posts');
+        this.allPosts = response.data.result;
+        console.log("allPosts: ", this.allPosts);
       } catch (error) {
         // this.$bvModal.show('modal-failure');
       }
     },
   },
   async mounted() {
-    let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    this.email = userInfo.email;
-    this.userHealthStatus = userInfo.status;
-    this.userActivityStatus = userInfo.activityStatus;
-    await this.getGoalTasks();
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    await this.getPosts();
   },
 };
 </script>

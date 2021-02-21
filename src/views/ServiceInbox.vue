@@ -9,8 +9,8 @@
               <div class="chat-list text-left">
                 <h3><b>Chats</b></h3>
                 <hr/>
-                <div v-for="item in 16" class="list-of-people">
-                  <label>User Name</label>
+                <div @click="showChat(user)" v-for="(user, index) in connectedUsers" :key="index"  class="list-of-people">
+                  <label>{{user.name}}</label>
                 </div>
               </div>
             </b-col>
@@ -18,41 +18,21 @@
               <div class="message-list text-left">
                 <h3><b>User Name</b></h3>
                 <hr/>
-                <div v-for="item in 2">
-                  <div class="message-me">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd jhasgd jhasg djhsag djhgsa jdhgsa jdhgsa jhdgsa jhdg sajhdgs ajhdg jashgd jhg ajhsgd jhasg djhsag jdhgas jhd
+                <div v-for="(message, index) in messages" :key="index">
+                  <div v-if="userInfo.id == message.from_id" class="message-me">
+                    <label><i><b>{{userInfo.name}}</b></i></label><br/>
+                    {{message.message}}
                   </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-me">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-you">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
-                  </div>
-                  <div class="message-me">
-                    <label><i><b>User Name</b></i></label><br/>
-                    asdasdghjashgd jahsgd ahsgd jhasgd 
+                  <div v-else class="message-you">
+                    <label><i><b>{{message.from}}</b></i></label><br/>
+                    {{message.message}}
                   </div>
                 </div>
               </div>
               <div style="margin-top: 1vh" class="text-left">
-                <b-form @submit.prevent="submitForm">
+                <b-form @submit.prevent="sendMessage">
                     <div style="float: left; width: 80%;">
-                      <input style="height: 9vh;" type="text" required v-model="username" class="form-control" placeholder="Write your message here ...">                        
+                      <input style="height: 9vh;" type="text" required v-model="userMessage" class="form-control" placeholder="Write your message here ...">                        
                     </div>
                     <div style="float: left; width: 17%; margin-left: 3%;">                        
                       <b-button style="height: 9vh; width: 100%;" variant="primary" type="submit"><font-awesome-icon icon="paper-plane" /></b-button>
@@ -113,117 +93,61 @@
 // @ is an alias to /src
 import AdminNavbar from "@/components/AdminNavbar.vue";
 import axios from "../axios_instance.js";
+import io from 'socket.io-client';
 
 export default {
-  name: "ServiceInbox",
+  name: "Inbox",
   components: {
     AdminNavbar
   },
   data() {
     return {
-      username: null,
-      taskProgress: null,
-      taskList: [],
-      openFormTaskUpdate: false,
+      userMessage: null,
+      socket : io(''+process.env.VUE_APP_SOCKET_URL),
+      connectedUsers: [],
+      messages: [],
       openForm: false,
-      goalDescription: null,
-      openFormEmployee: false,
-      employeeEmail: null,
-      selectdOrg: null,
-      name: null,
-      email: null,
-      weblink: null,
-      loadingActive: false,
-      organization: [],
-      employee: [],
-      organizationId: null,
-      userHealthStatus: null,
-      userActivityStatus: null,
-      priority: null,
-      options: [{ value: null, text: 'Please select an organization' }],
-      progressOptions: [
-        { value: null, text: 'Please select progress' },
-        { value: "Not Started", text: 'Not Started' },
-        { value: "In Progress", text: 'In Progress' },
-        { value: "Need Review", text: 'Need Review' }
-      ],
-      mainStatusOptions: [
-        { value: null, text: 'Please select activity status' },
-        { value: "active", text: 'active' },
-        { value: "on leave", text: 'on leave' },
-      ],
-      healthStatusOptions: [
-        { value: null, text: 'Please select health status' },
-        { value: "Ok", text: 'Ok' },
-        { value: "Ok and Vaccinated", text: 'Ok and Vaccinated' },
-        { value: "Covid", text: 'Covid' },
-        { value: "Need Mental Help", text: 'Need Mental Help' },
-        { value: "Other Sickness", text: 'Other Sickness' }
-      ],
+      userInfo: null,
+      selectedUser: null,
     };
   },
   methods: {
-    async submitForm() {
+    async sendMessage() {
+      this.socket.emit('SEND_MESSAGE', {
+          from_id: this.userInfo.id,
+          from: this.userInfo.name,
+          to_id: this.selectedUser.id,
+          to: this.selectedUser.name,
+          message: this.userMessage
+      });
+      this.userMessage = '';
+    },
+    async showChat(user) {
+      this.selectedUser = user;
       try {
-        let response = await axios.post('/update/users', {
-          email: this.email,
-          status: this.userHealthStatus,
-          leave_status: this.userActivityStatus,
-        });      
-        localStorage.setItem('userInfo', JSON.stringify({
-          activityStatus: this.userActivityStatus,
-          email: this.email,
-          role: "employee",
-          status: this.userHealthStatus,
-          username: this.userActivityStatus
-        }));
-        this.$bvModal.show('modal-success');
+        let response = await axios.get('/getMessages/'+this.userInfo.id+'/'+user.id);
+        this.messages = response.data.result;
       } catch (error) {
-        this.$bvModal.show('modal-failure');
+        alert("Something went wrong!");
       }
     },
-    selectedTaskProgress(item) {
-      console.log(item);
-      if(item.status == 'Completed') return;
-      this.selectedTaskId = item.id;
-      this.taskProgress = item.status;
-      this.openFormTaskUpdate = true;
-    },
-    async submitFormTaskUpdate() {
-      this.loadingActive = true;
-      let empName = "";
+    async getConnectedUsers() {
       try {
-        let response = await axios.post('/update/tasks', {
-          id: this.selectedTaskId,
-          assignedTo: this.email,
-          empName: this.username,
-          status: this.taskProgress,
-        });
-        this.openFormTaskUpdate = false;
-        this.taskProgress = null;
-        this.assignedTo = null;        
-        await this.getGoalTasks();
-        this.$bvModal.show('modal-success');
+        let response = await axios.get('/getConnectedUsers/'+this.userInfo.id);
+        this.connectedUsers = response.data.result;
+        console.log("connectedUsers: ", this.connectedUsers);
       } catch (error) {
-        this.$bvModal.show('modal-failure');
-      }
-    },
-    async getGoalTasks() {
-      try {
-        let response = await axios.get('/read/employeetasks/'+this.email);
-        this.taskList = response.data;
-        console.log("tasklist: ", this.taskList);
-      } catch (error) {
-        // this.$bvModal.show('modal-failure');
+        alert("Something went wrong!");
       }
     },
   },
   async mounted() {
-    let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    this.email = userInfo.email;
-    this.userHealthStatus = userInfo.status;
-    this.userActivityStatus = userInfo.activityStatus;
-    await this.getGoalTasks();
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    this.getConnectedUsers();
+    this.socket.on('MESSAGE', (data) => {
+        this.messages = [...this.messages, data];
+        console.log("this.messages: ", this.messages);
+    });
   },
 };
 </script>

@@ -88,11 +88,11 @@ export default {
   methods: {
     async submitForm() {
       try {
-        let response = await axios.post('/insert/users', {
-          username: this.username,
+        let response = await axios.post('/register', {
+          name: this.username,
           password: this.password,
           email: this.email,
-          role: this.role,
+          account_type: this.role,
         });
         this.$bvModal.show('modal-success');
         setTimeout(() => {

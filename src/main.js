@@ -5,16 +5,20 @@ import router from "./router";
 import store from "./store";
 import BootstrapVue from "bootstrap-vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPlus, faPlay, faInfoCircle, faStop, faPaperPlane, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faPlus, faPlay, faInfoCircle, faStop, faPaperPlane, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import vueXlsxTable from "vue-xlsx-table";
 import "./custom.scss";
 
-library.add(faPlus, faPlay, faInfoCircle, faStop, faPaperPlane, faCheck);
+// SOCKET STUFFS
+// import * as io from 'socket.io-client'
+// const connection = io.connect('http://localhost:3000', { transports: ['websocket'], upgrade: false});
 
 Vue.use(BootstrapVue);
 Vue.use(Moment);
 Vue.use(vueXlsxTable, { rABS: false });
+
+library.add(faThumbsUp, faPlus, faPlay, faInfoCircle, faStop, faPaperPlane, faCheck);
 
 Vue.config.productionTip = false;
 

@@ -47,7 +47,7 @@
         FAILURE
       </template>
       <div class="d-block text-center">
-        <p class="text-left">Error!</p>
+        <p class="text-left">Wrong email or password!</p>
       </div>
       <b-button class="mt-3" block @click="$bvModal.hide('modal-failure')">CLOSE</b-button>
     </b-modal>
@@ -71,15 +71,15 @@ export default {
     async submitForm() {
       this.loadingActive = true;
       try {
-        let response = await axios.post('/auth/signin', {
-          email: this.email,
-          password: this.password
-        });
-        localStorage.setItem('userInfo', JSON.stringify(response.data));
-        if(response.data.role == "admin") {
-          this.$router.push("/management");
+        let response = await axios.get('/signin/'+this.email+'/'+this.password);
+        localStorage.setItem('userInfo', JSON.stringify(response.data.result));
+        console.log("response.data.result: ", response.data.result);
+        if(response.data.result.account_type == "regular") {
+          this.$router.push("/feed");
+        } else if (response.data.result.account_type == "service"){
+          this.$router.push("/service-inbox");
         } else {
-          this.$router.push("/board");
+          this.$bvModal.show('modal-failure');
         }
       } catch (error) {
         this.$bvModal.show('modal-failure');
