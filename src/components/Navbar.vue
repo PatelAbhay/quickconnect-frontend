@@ -2,7 +2,7 @@
   <div>
     <b-navbar toggleable="lg" type="dark" variant="primary">
       <b-navbar-brand to="/">
-        <b style="font-size: 16px;">ShareNow</b>
+        <b style="font-size: 16px;">QuickConnect</b>
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
